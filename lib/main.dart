@@ -27,7 +27,13 @@ class CalcAppState extends State<CalcApp> {
   String _expression = '';
 
   void numClick(String text) {
-    setState(() => _expression += text);
+    if (text == '+/-') {
+      _expression = '-(' + _expression + ')';
+    }
+    else {
+      _expression += text;
+    }
+    setState(() => _expression);
   }
 
   void allClear(String text) {
@@ -50,7 +56,12 @@ class CalcAppState extends State<CalcApp> {
 
     setState(() {
       _history = _expression;
-      _expression = exp.evaluate(EvaluationType.REAL, cm).toString();
+      double eval = exp.evaluate(EvaluationType.REAL, cm);
+      if (eval % 1 == 0) {
+        _expression = eval.toInt().toString();
+      } else {
+        _expression = eval.toString();
+      }
     });
   }
 
@@ -60,7 +71,7 @@ class CalcAppState extends State<CalcApp> {
       debugShowCheckedModeBanner: false,
       title: 'Calculator',
       home: Scaffold(
-        backgroundColor: Color(0xFF283637),
+        backgroundColor: Color(0xFFFFD700),
         body: Container(
           padding: EdgeInsets.all(12),
           child: Column(
@@ -89,7 +100,7 @@ class CalcAppState extends State<CalcApp> {
                     style: GoogleFonts.rubik(
                       textStyle: TextStyle(
                         fontSize: 48,
-                        color: Colors.white,
+                        color: Colors.red,
                       ),
                     ),
                   ),
@@ -201,7 +212,7 @@ class CalcAppState extends State<CalcApp> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   CalcButton(
-                    text: '.',
+                    text: '+/-',
                     callback: numClick,
                   ),
                   CalcButton(
@@ -209,7 +220,7 @@ class CalcAppState extends State<CalcApp> {
                     callback: numClick,
                   ),
                   CalcButton(
-                    text: '00',
+                    text: '.',
                     callback: numClick,
                     textSize: 26,
                   ),
